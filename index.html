@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sultan Döner — Authentic Street Food Berlin</title>
+  <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800;900&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg:#0D0D0D;--bg2:#111111;--bg3:#1A1A1A;
+      --red:#FF4500;--yellow:#FFB800;
+      --white:#FFFFFF;--gray:#999999;
+      --border:rgba(255,69,0,0.2);
+    }
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+    html{scroll-behavior:smooth;overflow-x:hidden;}
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--white);overflow-x:hidden;}
+    ::-webkit-scrollbar{width:4px;}
+    ::-webkit-scrollbar-thumb{background:var(--red);}
+    a{text-decoration:none;color:inherit;}
+
+    /* ═══════════════ NAV ═══════════════ */
+    nav{position:fixed;top:0;width:100%;z-index:200;transition:background .3s,box-shadow .3s;}
+    nav.scrolled{background:rgba(13,13,13,0.97);backdrop-filter:blur(16px);box-shadow:0 1px 0 var(--border);}
+    .nav-inner{max-width:1200px;margin:0 auto;padding:0 32px;height:68px;display:flex;align-items:center;justify-content:space-between;}
+    .nav-logo{font-family:'Barlow Condensed',sans-serif;font-size:22px;font-weight:900;letter-spacing:4px;text-transform:uppercase;}
+    .nav-logo em{color:var(--red);font-style:normal;}
+    .nav-links{display:flex;align-items:center;gap:36px;}
+    .nav-links a{font-size:11px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.6);transition:color .2s;}
+    .nav-links a:hover{color:var(--red);}
+    .nav-right{display:flex;align-items:center;gap:16px;}
+    .nav-lang{display:flex;gap:4px;}
+    .nl-btn{background:none;border:1px solid rgba(255,255,255,0.15);border-radius:2px;padding:4px 9px;font-size:10px;font-weight:700;letter-spacing:1px;color:rgba(255,255,255,0.4);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+    .nl-btn.active,.nl-btn:hover{background:var(--red);border-color:var(--red);color:#fff;}
+    .mob-toggle{display:none;background:none;border:none;color:var(--white);cursor:pointer;padding:4px;}
+    .mob-toggle svg{display:block;}
+
+    /* ═══════════════ MOB NAV ═══════════════ */
+    .mob-nav{display:none;position:fixed;inset:0;background:rgba(13,13,13,0.98);z-index:300;flex-direction:column;align-items:center;justify-content:center;gap:36px;}
+    .mob-nav.open{display:flex;}
+    .mob-nav a{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.85);transition:color .2s;}
+    .mob-nav a:hover{color:var(--red);}
+    .mob-close{position:absolute;top:20px;right:24px;background:none;border:none;color:var(--white);cursor:pointer;font-size:26px;}
+    .mob-lang{display:flex;gap:8px;margin-top:8px;}
+
+    /* ═══════════════ HERO ═══════════════ */
+    .hero{min-height:100vh;position:relative;display:flex;align-items:center;background:url('https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=1600&auto=format&fit=crop') center/cover no-repeat;}
+    .hero::before{content:'';position:absolute;inset:0;background:linear-gradient(to right,rgba(0,0,0,0.95) 40%,rgba(0,0,0,0.3) 100%);}
+    .hero-content{position:relative;z-index:1;max-width:1200px;margin:0 auto;padding:0 32px;width:100%;}
+    .hero-inner{max-width:580px;}
+    .hero-eyebrow{font-size:11px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--red);margin-bottom:24px;}
+    .hero-title{font-family:'Barlow Condensed',sans-serif;font-weight:900;line-height:.92;text-transform:uppercase;margin-bottom:28px;}
+    .hero-title .ht1{display:block;font-size:clamp(80px,10vw,130px);color:var(--white);}
+    .hero-title .ht2{display:block;font-size:clamp(80px,10vw,130px);color:var(--red);text-shadow:0 0 60px rgba(255,69,0,0.5);}
+    .hero-desc{font-size:16px;color:rgba(255,255,255,0.6);line-height:1.65;margin-bottom:36px;max-width:440px;}
+    .hero-btns{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:48px;}
+    .btn-fill{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:var(--red);color:#fff;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:2px;border:2px solid var(--red);cursor:pointer;transition:all .2s;}
+    .btn-fill:hover{background:transparent;color:var(--red);}
+    .btn-outline{display:inline-flex;align-items:center;gap:8px;padding:14px 28px;background:transparent;color:#fff;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;border-radius:2px;border:2px solid rgba(255,255,255,0.4);cursor:pointer;transition:all .2s;}
+    .btn-outline:hover{border-color:#fff;background:rgba(255,255,255,0.06);}
+    .hero-stats{display:flex;gap:32px;flex-wrap:wrap;}
+    .hs{display:flex;flex-direction:column;gap:3px;}
+    .hs-n{font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:900;color:var(--yellow);line-height:1;}
+    .hs-l{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,0.4);}
+    .hs-sep{width:1px;background:rgba(255,255,255,0.12);align-self:stretch;}
+
+    /* ═══════════════ TICKER ═══════════════ */
+    .ticker{background:var(--red);overflow:hidden;padding:10px 0;border-top:1px solid rgba(0,0,0,0.3);}
+    .ticker-track{display:flex;white-space:nowrap;animation:tickerRun 28s linear infinite;}
+    .ticker-track:hover{animation-play-state:paused;}
+    .ticker-item{font-family:'Barlow Condensed',sans-serif;font-size:13px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:#fff;padding:0 24px;}
+    .ticker-dot{color:rgba(255,255,255,0.55);font-size:18px;line-height:1;align-self:center;}
+    @keyframes tickerRun{from{transform:translateX(0);}to{transform:translateX(-50%);}}
+
+    /* ═══════════════ SECTION SHARED ═══════════════ */
+    .s-label{font-size:10px;font-weight:700;letter-spacing:5px;text-transform:uppercase;color:var(--red);margin-bottom:12px;}
+    .s-heading{font-family:'Barlow Condensed',sans-serif;font-size:clamp(36px,5vw,58px);font-weight:900;text-transform:uppercase;color:var(--white);text-shadow:0 0 40px rgba(255,69,0,0.25);line-height:1.05;}
+    .section-inner{max-width:1200px;margin:0 auto;padding:0 32px;}
+
+    /* ═══════════════ MENU SECTION ═══════════════ */
+    #menu{padding:96px 0;background:var(--bg2);}
+    .menu-top{margin-bottom:56px;}
+    .menu-top .s-heading{margin-bottom:0;}
+    .feat-cards{display:flex;flex-direction:column;gap:16px;margin-bottom:48px;}
+    .feat-card{display:grid;grid-template-columns:260px 1fr auto;align-items:center;background:var(--bg3);border:1px solid rgba(255,255,255,0.06);border-radius:3px;overflow:hidden;transition:border-color .3s,transform .3s;}
+    .feat-card:hover{border-color:rgba(255,69,0,0.35);transform:translateX(4px);}
+    .fc-img{width:260px;height:160px;object-fit:cover;display:block;flex-shrink:0;}
+    .fc-body{padding:24px 32px;}
+    .fc-num{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,69,0,0.6);margin-bottom:8px;}
+    .fc-name{font-family:'Barlow Condensed',sans-serif;font-size:26px;font-weight:800;text-transform:uppercase;color:var(--white);margin-bottom:8px;letter-spacing:1px;}
+    .fc-note{font-size:13px;color:var(--gray);line-height:1.5;}
+    .fc-price{padding:24px 32px;text-align:right;flex-shrink:0;}
+    .fc-p{font-family:'Barlow Condensed',sans-serif;font-size:32px;font-weight:900;color:var(--yellow);line-height:1;}
+    .fc-eur{font-size:11px;color:var(--gray);margin-top:3px;letter-spacing:1px;text-transform:uppercase;}
+    .menu-cta{text-align:center;}
+    .btn-menu-open{display:inline-flex;align-items:center;gap:10px;padding:16px 40px;background:var(--red);color:#fff;font-size:12px;font-weight:700;letter-spacing:3px;text-transform:uppercase;border-radius:2px;border:none;cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+    .btn-menu-open:hover{background:#E03D00;transform:scale(1.02);}
+    .btn-menu-open svg{width:16px;height:16px;}
+
+    /* ═══════════════ MENU MODAL ═══════════════ */
+    .menu-modal{display:none;position:fixed;inset:0;background:#000;z-index:400;overflow-y:auto;}
+    .menu-modal.open{display:block;}
+    .mm-inner{max-width:960px;margin:0 auto;padding:40px 32px 80px;}
+    .mm-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:40px;padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,0.08);}
+    .mm-title{font-family:'Barlow Condensed',sans-serif;font-size:36px;font-weight:900;text-transform:uppercase;letter-spacing:2px;}
+    .mm-title em{color:var(--red);font-style:normal;}
+    .mm-close{background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;cursor:pointer;color:#fff;font-size:20px;transition:all .2s;flex-shrink:0;}
+    .mm-close:hover{background:var(--red);border-color:var(--red);}
+    .mm-tabs{display:flex;gap:4px;margin-bottom:36px;flex-wrap:wrap;}
+    .mm-tab{padding:10px 20px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.08);border-radius:2px;font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--gray);cursor:pointer;transition:all .2s;font-family:'Inter',sans-serif;}
+    .mm-tab.active,.mm-tab:hover{background:var(--red);border-color:var(--red);color:#fff;}
+    .mm-panel{display:none;}
+    .mm-panel.active{display:block;}
+    .mm-items{display:flex;flex-direction:column;gap:8px;}
+    .mm-item{display:grid;grid-template-columns:160px 1fr auto;align-items:stretch;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.07);border-radius:4px;overflow:hidden;transition:border-color .2s,background .2s;}
+    .mm-item:hover{background:rgba(255,69,0,0.06);border-color:rgba(255,69,0,0.3);}
+    .mm-img{width:160px;height:130px;object-fit:cover;display:block;flex-shrink:0;}
+    .mm-info{padding:20px 24px;display:flex;flex-direction:column;justify-content:center;}
+    .mm-name{font-family:'Barlow Condensed',sans-serif;font-size:24px;font-weight:900;text-transform:uppercase;color:var(--white);letter-spacing:1px;margin-bottom:8px;}
+    .mm-note{font-size:14px;color:var(--gray);line-height:1.55;}
+    .mm-p{padding:20px 24px;display:flex;align-items:center;font-family:'Barlow Condensed',sans-serif;font-size:28px;font-weight:700;color:var(--yellow);white-space:nowrap;border-left:1px solid rgba(255,255,255,0.06);}
+
+    /* ═══════════════ STORY SECTION ═══════════════ */
+    #about{padding:96px 0;background:var(--bg3);position:relative;overflow:hidden;}
+    #about::before{content:'2001';position:absolute;right:-30px;top:50%;transform:translateY(-50%);font-family:'Barlow Condensed',sans-serif;font-size:clamp(160px,22vw,280px);font-weight:900;color:rgba(255,255,255,0.025);line-height:1;pointer-events:none;user-select:none;z-index:0;}
+    .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:72px;align-items:center;position:relative;z-index:1;}
+    .about-img-wrap{position:relative;}
+    .about-img{width:100%;height:480px;object-fit:cover;border-radius:3px;display:block;}
+    .about-badge{position:absolute;bottom:24px;right:24px;background:var(--red);padding:20px 24px;border-radius:3px;text-align:center;}
+    .ab-n{font-family:'Barlow Condensed',sans-serif;font-size:18px;font-weight:900;color:#fff;letter-spacing:1px;}
+    .ab-l{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,0.75);margin-top:4px;}
+    .about-text p{font-size:15px;line-height:1.8;color:rgba(255,255,255,0.6);margin-bottom:16px;}
+    .about-stats{display:flex;gap:0;margin-top:40px;}
+    .ast{flex:1;text-align:center;padding:24px 0;border-right:1px solid rgba(255,255,255,0.08);}
+    .ast:last-child{border-right:none;}
+    .ast-n{font-family:'Barlow Condensed',sans-serif;font-size:80px;font-weight:900;color:var(--red);line-height:1;text-shadow:0 0 40px rgba(255,69,0,0.35);}
+    .ast-l{font-size:9px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;color:var(--gray);margin-top:4px;}
+
+    /* ═══════════════ FIND US SECTION ═══════════════ */
+    #visit{padding:96px 0;background:var(--bg2);}
+    .visit-top{margin-bottom:48px;}
+    .visit-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:40px;}
+    .vc{background:var(--bg3);border-left:4px solid var(--red);padding:28px 24px;}
+    .vc-icon{width:36px;height:36px;margin-bottom:16px;color:var(--red);}
+    .vc-label{font-size:9px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--red);margin-bottom:10px;}
+    .vc-val{font-size:15px;font-weight:500;color:var(--white);line-height:1.6;}
+    .vc-sub{font-size:12px;color:var(--gray);margin-top:6px;}
+    .vc-val a{color:var(--white);text-decoration:none;transition:color .2s;}
+    .vc-val a:hover{color:var(--yellow);}
+    .visit-map{border-radius:3px;overflow:hidden;border:1px solid rgba(255,255,255,0.06);}
+    .visit-map iframe{display:block;width:100%;height:380px;filter:grayscale(60%) invert(90%) hue-rotate(180deg);border:none;}
+
+    /* ═══════════════ FOOTER ═══════════════ */
+    footer{background:var(--bg);border-top:1px solid rgba(255,255,255,0.06);padding:40px 0;}
+    .ft-inner{max-width:1200px;margin:0 auto;padding:0 32px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;}
+    .ft-logo{font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:900;letter-spacing:4px;text-transform:uppercase;}
+    .ft-logo em{color:var(--red);font-style:normal;}
+    .ft-copy{font-size:12px;color:rgba(255,255,255,0.25);}
+    .ft-tag{font-size:10px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,0.18);}
+
+    /* ═══════════════ FLOAT BUTTON ═══════════════ */
+    .float-order{position:fixed;bottom:28px;right:28px;z-index:150;display:flex;align-items:center;gap:8px;background:var(--red);color:#fff;padding:14px 22px;border-radius:50px;font-size:12px;font-weight:700;letter-spacing:2px;text-transform:uppercase;cursor:pointer;border:none;box-shadow:0 4px 24px rgba(255,69,0,0.45);transition:all .2s;font-family:'Inter',sans-serif;}
+    .float-order:hover{background:#E03D00;transform:translateY(-2px);box-shadow:0 8px 32px rgba(255,69,0,0.55);}
+    .float-dot{width:8px;height:8px;background:#fff;border-radius:50%;animation:pulseDot 1.6s ease infinite;}
+    @keyframes pulseDot{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(1.3);}}
+
+    /* ═══════════════ REVEAL ═══════════════ */
+    .rv{opacity:0;transform:translateY(28px);transition:opacity .6s ease,transform .6s ease;}
+    .rv.visible{opacity:1;transform:none;}
+    .rv2{opacity:0;transform:translateX(-20px);transition:opacity .6s ease,transform .6s ease;}
+    .rv2.visible{opacity:1;transform:none;}
+
+    /* ═══════════════ MOBILE ═══════════════ */
+    @media(max-width:900px){
+      .feat-card{grid-template-columns:180px 1fr;}
+      .fc-img{width:180px;height:140px;}
+      .fc-price{display:none;}
+      .fc-note::after{content:attr(data-price);display:block;font-family:'Barlow Condensed',sans-serif;font-size:20px;font-weight:700;color:var(--yellow);margin-top:8px;}
+      .about-grid{grid-template-columns:1fr;gap:40px;}
+      .visit-cards{grid-template-columns:1fr;}
+    }
+    @media(max-width:640px){
+      .nav-links{display:none;}
+      .mob-toggle{display:block;}
+      .hero-inner{max-width:100%;}
+      .hero-title .ht1,.hero-title .ht2{font-size:clamp(64px,18vw,100px);}
+      .hero-stats{gap:20px;}
+      .hs-sep{display:none;}
+      .feat-card{grid-template-columns:120px 1fr;}
+      .fc-img{width:120px;height:120px;}
+      .fc-body{padding:16px 16px;}
+      .fc-name{font-size:18px;}
+      .about-stats{flex-direction:column;gap:0;}
+      .ast{border-right:none;border-bottom:1px solid rgba(255,255,255,0.08);}
+      .ast:last-child{border-bottom:none;}
+      .ast-n{font-size:56px;}
+      .section-inner{padding:0 20px;}
+      #menu,#about,#visit{padding:64px 0;}
+      .mm-inner{padding:24px 20px 80px;}
+      .mm-item{grid-template-columns:100px 1fr auto;}
+      .mm-img{width:100px;height:100px;}
+      .mm-info{padding:14px 14px;}
+      .mm-name{font-size:18px;}
+      .mm-note{font-size:12px;}
+      .mm-p{padding:14px 12px;font-size:20px;}
+      .visit-map iframe{height:260px;}
+    }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <div class="nav-logo">SULTAN <em>DÖNER</em></div>
+    <div class="nav-links">
+      <a href="#menu" data-i18n="nav_menu">Menu</a>
+      <a href="#about" data-i18n="nav_about">About</a>
+      <a href="#visit" data-i18n="nav_visit">Visit</a>
+    </div>
+    <div class="nav-right">
+      <div class="nav-lang">
+        <button class="nl-btn active" onclick="setLang('en')">EN</button>
+        <button class="nl-btn" onclick="setLang('de')">DE</button>
+        <button class="nl-btn" onclick="setLang('uk')">UK</button>
+      </div>
+      <button class="mob-toggle" onclick="document.querySelector('.mob-nav').classList.add('open')" aria-label="Menu">
+        <svg width="22" height="16" viewBox="0 0 22 16" fill="none"><rect width="22" height="2" fill="white"/><rect y="7" width="22" height="2" fill="white"/><rect y="14" width="22" height="2" fill="white"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- MOB NAV -->
+<div class="mob-nav">
+  <button class="mob-close" onclick="document.querySelector('.mob-nav').classList.remove('open')">&#10005;</button>
+  <a href="#menu" onclick="document.querySelector('.mob-nav').classList.remove('open')" data-i18n="nav_menu">Menu</a>
+  <a href="#about" onclick="document.querySelector('.mob-nav').classList.remove('open')" data-i18n="nav_about">About</a>
+  <a href="#visit" onclick="document.querySelector('.mob-nav').classList.remove('open')" data-i18n="nav_visit">Visit</a>
+  <div class="mob-lang">
+    <button class="nl-btn active" onclick="setLang('en');document.querySelector('.mob-nav').classList.remove('open')">EN</button>
+    <button class="nl-btn" onclick="setLang('de');document.querySelector('.mob-nav').classList.remove('open')">DE</button>
+    <button class="nl-btn" onclick="setLang('uk');document.querySelector('.mob-nav').classList.remove('open')">UK</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <div class="hero-inner">
+      <div class="hero-eyebrow" data-i18n="hero_eyebrow">AUTHENTIC · SINCE 2001</div>
+      <h1 class="hero-title">
+        <span class="ht1">SULTAN</span>
+        <span class="ht2">DÖNER</span>
+      </h1>
+      <p class="hero-desc" data-i18n="hero_desc">Handcrafted döner, real Turkish recipes, halal-certified. Served hot from the spit every day in the heart of Berlin-Mitte.</p>
+      <div class="hero-btns">
+        <button class="btn-fill" onclick="openModal()" data-i18n="btn_order">ORDER NOW</button>
+        <a href="#menu" class="btn-outline" data-i18n="btn_menu">SEE MENU</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hs"><div class="hs-n">20+</div><div class="hs-l" data-i18n="stat_years">YEARS</div></div>
+        <div class="hs-sep"></div>
+        <div class="hs"><div class="hs-n">500+</div><div class="hs-l" data-i18n="stat_daily">DAILY GUESTS</div></div>
+        <div class="hs-sep"></div>
+        <div class="hs"><div class="hs-n">100%</div><div class="hs-l" data-i18n="stat_halal">HALAL</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <span class="ticker-item">CLASSIC DÖNER</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">CHICKEN WRAP</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">LAHMACUN</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">FALAFEL</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">ADANA KEBAB</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">FRESH DAILY</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">HALAL CERTIFIED</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">SINCE 2001</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">BERLIN-MITTE</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">CLASSIC DÖNER</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">CHICKEN WRAP</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">LAHMACUN</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">FALAFEL</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">ADANA KEBAB</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">FRESH DAILY</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">HALAL CERTIFIED</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">SINCE 2001</span><span class="ticker-dot">·</span>
+    <span class="ticker-item">BERLIN-MITTE</span><span class="ticker-dot">·</span>
+  </div>
+</div>
+
+<!-- MENU SECTION -->
+<section id="menu">
+  <div class="section-inner">
+    <div class="menu-top rv">
+      <div class="s-label" data-i18n="menu_label">Our Menu</div>
+      <h2 class="s-heading" data-i18n="menu_heading">What We Serve</h2>
+    </div>
+    <div class="feat-cards">
+      <div class="feat-card rv">
+        <img class="fc-img" src="https://images.unsplash.com/photo-1561651823-34feb02250e4?w=600&h=320&fit=crop&auto=format" alt="Classic Döner" loading="lazy">
+        <div class="fc-body">
+          <div class="fc-num">01</div>
+          <div class="fc-name" data-i18n="item_classic_doner">Classic Döner</div>
+          <div class="fc-note" data-i18n="item_classic_doner_note" data-price="€ 6.50">Lamb &amp; veal, house sauce, fresh vegetables, toasted flatbread</div>
+        </div>
+        <div class="fc-price"><div class="fc-p">6.50</div><div class="fc-eur">EUR</div></div>
+      </div>
+      <div class="feat-card rv">
+        <img class="fc-img" src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=600&h=320&fit=crop&auto=format" alt="Adana Kebab" loading="lazy">
+        <div class="fc-body">
+          <div class="fc-num">02</div>
+          <div class="fc-name" data-i18n="item_adana">Adana Kebab</div>
+          <div class="fc-note" data-i18n="item_adana_note" data-price="€ 11.50">Spiced minced lamb on skewer, lavash, sumac onions, grilled peppers</div>
+        </div>
+        <div class="fc-price"><div class="fc-p">11.50</div><div class="fc-eur">EUR</div></div>
+      </div>
+      <div class="feat-card rv">
+        <img class="fc-img" src="https://images.unsplash.com/photo-1547592180-85f173990554?w=600&h=320&fit=crop&auto=format" alt="Falafel Wrap" loading="lazy">
+        <div class="fc-body">
+          <div class="fc-num">03</div>
+          <div class="fc-name" data-i18n="item_falafel">Falafel Wrap</div>
+          <div class="fc-note" data-i18n="item_falafel_note" data-price="€ 5.50">Crispy chickpea falafel, tahini, pickled red cabbage, harissa</div>
+        </div>
+        <div class="fc-price"><div class="fc-p">5.50</div><div class="fc-eur">EUR</div></div>
+      </div>
+    </div>
+    <div class="menu-cta rv">
+      <button class="btn-menu-open" onclick="openModal()">
+        <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3v10M3 8h10"/></svg>
+        <span data-i18n="btn_full_menu">VIEW FULL MENU</span>
+      </button>
+    </div>
+  </div>
+</section>
+
+<!-- MENU MODAL -->
+<div class="menu-modal" id="menu-modal">
+  <div class="mm-inner">
+    <div class="mm-header">
+      <div class="mm-title">SULTAN <em>DÖNER</em> — <span data-i18n="modal_title">Full Menu</span></div>
+      <button class="mm-close" onclick="closeModal()">&#10005;</button>
+    </div>
+    <div class="mm-tabs">
+      <button class="mm-tab active" onclick="setTab('tab1')" data-i18n="cat_doner">Döner &amp; Wraps</button>
+      <button class="mm-tab" onclick="setTab('tab2')" data-i18n="cat_plates">Plates &amp; Specials</button>
+      <button class="mm-tab" onclick="setTab('tab3')" data-i18n="cat_sides">Sides &amp; Drinks</button>
+    </div>
+
+    <!-- TAB 1 -->
+    <div class="mm-panel active" id="tab1">
+      <div class="mm-items">
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1561651823-34feb02250e4?w=320&h=260&fit=crop&auto=format" alt="Classic Döner" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_classic_doner">Classic Döner</div><div class="mm-note" data-i18n="item_classic_doner_note">Lamb &amp; veal, house sauce, fresh vegetables, toasted flatbread</div></div>
+          <div class="mm-p">€ 6.50</div>
+        </div>
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1599487488170-d11ec9c172f0?w=320&h=260&fit=crop&auto=format" alt="Chicken Döner" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_chicken_doner">Chicken Döner</div><div class="mm-note" data-i18n="item_chicken_doner_note">Grilled chicken, yogurt sauce, iceberg, tomato</div></div>
+          <div class="mm-p">€ 6.00</div>
+        </div>
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1547592180-85f173990554?w=320&h=260&fit=crop&auto=format" alt="Falafel Wrap" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_falafel">Falafel Wrap</div><div class="mm-note" data-i18n="item_falafel_note">Crispy chickpea falafel, tahini, pickled red cabbage, harissa</div></div>
+          <div class="mm-p">€ 5.50</div>
+        </div>
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1563379926898-05f4575a45d8?w=320&h=260&fit=crop&auto=format" alt="Lahmacun" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_lahmacun">Lahmacun</div><div class="mm-note" data-i18n="item_lahmacun_note">Turkish flatbread pizza, minced meat, parsley, lemon</div></div>
+          <div class="mm-p">€ 4.50</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2 -->
+    <div class="mm-panel" id="tab2">
+      <div class="mm-items">
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1512058564366-18510be2db19?w=320&h=260&fit=crop&auto=format" alt="Mixed Plate" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_mixed">Mixed Plate</div><div class="mm-note" data-i18n="item_mixed_note">Döner, rice, grilled vegetables, house salad, bread</div></div>
+          <div class="mm-p">€ 12.90</div>
+        </div>
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1574484284002-952d92456975?w=320&h=260&fit=crop&auto=format" alt="Adana Kebab" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_adana">Adana Kebab</div><div class="mm-note" data-i18n="item_adana_note">Spiced minced lamb, lavash, sumac onions, grilled peppers</div></div>
+          <div class="mm-p">€ 11.50</div>
+        </div>
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=320&h=260&fit=crop&auto=format" alt="Iskender" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_iskender">İskender Kebab</div><div class="mm-note" data-i18n="item_iskender_note">Sliced döner over bread, tomato sauce, yogurt, brown butter</div></div>
+          <div class="mm-p">€ 13.50</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3 -->
+    <div class="mm-panel" id="tab3">
+      <div class="mm-items">
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=320&h=260&fit=crop&auto=format" alt="Fries" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_fries">Crispy Fries</div><div class="mm-note" data-i18n="item_fries_note">Sea salt, optional spicy seasoning</div></div>
+          <div class="mm-p">€ 3.00</div>
+        </div>
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1571091718767-18b5b1457add?w=320&h=260&fit=crop&auto=format" alt="Ayran" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_ayran">Ayran</div><div class="mm-note" data-i18n="item_ayran_note">Traditional cold yogurt drink, salted</div></div>
+          <div class="mm-p">€ 2.00</div>
+        </div>
+        <div class="mm-item">
+          <img class="mm-img" src="https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=320&h=260&fit=crop&auto=format" alt="Baklava" loading="lazy">
+          <div class="mm-info"><div class="mm-name" data-i18n="item_baklava">Baklava</div><div class="mm-note" data-i18n="item_baklava_note">Walnut &amp; pistachio, honey syrup, 2 pcs</div></div>
+          <div class="mm-p">€ 3.50</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- STORY SECTION -->
+<section id="about">
+  <div class="section-inner">
+    <div class="about-grid">
+      <div class="about-img-wrap rv2">
+        <img class="about-img" src="https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=800&h=960&fit=crop&auto=format" alt="Our kitchen" loading="lazy">
+        <div class="about-badge">
+          <div class="ab-n">SINCE</div>
+          <div class="ab-l">2001</div>
+        </div>
+      </div>
+      <div class="rv">
+        <div class="s-label" data-i18n="about_label">Our Story</div>
+        <h2 class="s-heading" style="margin-bottom:24px;" data-i18n="about_title">Real Döner,<br>Real Tradition</h2>
+        <div class="about-text">
+          <p data-i18n="about_text1">Sultan Döner was founded in 2001 by Mehmet Yilmaz, who brought his family's recipe from Gaziantep to the heart of Berlin-Mitte. Every skewer is seasoned overnight, every bread is baked fresh each morning.</p>
+          <p data-i18n="about_text2">We use only halal-certified meat and never freeze our produce. Over 20 years, we've become a fixture of the neighborhood — a place where the line is always worth it.</p>
+        </div>
+        <div class="about-stats">
+          <div class="ast"><div class="ast-n">20+</div><div class="ast-l" data-i18n="fact_years">Years</div></div>
+          <div class="ast"><div class="ast-n">500+</div><div class="ast-l" data-i18n="fact_daily">Daily Guests</div></div>
+          <div class="ast"><div class="ast-n">100%</div><div class="ast-l" data-i18n="fact_halal">Halal</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FIND US -->
+<section id="visit">
+  <div class="section-inner">
+    <div class="visit-top rv">
+      <div class="s-label" data-i18n="visit_label">Find Us</div>
+      <h2 class="s-heading" data-i18n="visit_title">Come Hungry</h2>
+    </div>
+    <div class="visit-cards rv">
+      <div class="vc">
+        <svg class="vc-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 3C12.477 3 8 7.477 8 13c0 8.25 10 20 10 20s10-11.75 10-20c0-5.523-4.477-10-10-10z"/><circle cx="18" cy="13" r="3"/>
+        </svg>
+        <div class="vc-label" data-i18n="vg_address">Address</div>
+        <div class="vc-val">(ваша адреса)</div>
+        <div class="vc-sub">Berlin-Mitte</div>
+      </div>
+      <div class="vc">
+        <svg class="vc-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="18" cy="18" r="14"/><path d="M18 10v8l5 3"/>
+        </svg>
+        <div class="vc-label" data-i18n="vg_hours">Hours</div>
+        <div class="vc-val" data-i18n="vg_hours_val">Mon–Sat 11:00–23:00<br>Sun 12:00–21:00</div>
+      </div>
+      <div class="vc">
+        <svg class="vc-icon" viewBox="0 0 36 36" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M6 5h6l2 5-3 3a18 18 0 0 0 8 8l3-3 5 2v6a2 2 0 0 1-2 2C11 28 8 18.5 8 7a2 2 0 0 1 2-2z"/>
+        </svg>
+        <div class="vc-label" data-i18n="vg_phone">Phone</div>
+        <div class="vc-val"><a href="tel:+49">+49 -------</a></div>
+        <div class="vc-sub" data-i18n="vg_phone_sub">Order by phone</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="ft-inner">
+    <div class="ft-logo">SULTAN <em>DÖNER</em></div>
+    <div class="ft-copy" data-i18n="footer_copy">&copy; 2024 Sultan Döner. All rights reserved.</div>
+    <div class="ft-tag">Berlin-Mitte · Since 2001</div>
+  </div>
+</footer>
+
+<!-- FLOATING BUTTON -->
+<button class="float-order" onclick="document.getElementById('menu').scrollIntoView({behavior:'smooth'})" data-i18n="float_order">
+  <span class="float-dot"></span>
+  ORDER NOW
+</button>
+
+<script>
+  // ── NAV SCROLL ──
+  const nav = document.getElementById('main-nav');
+  window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 60), {passive:true});
+
+  // ── MODAL ──
+  function openModal(){
+    document.getElementById('menu-modal').classList.add('open');
+    document.body.style.overflow='hidden';
+  }
+  function closeModal(){
+    document.getElementById('menu-modal').classList.remove('open');
+    document.body.style.overflow='';
+  }
+  document.getElementById('menu-modal').addEventListener('click', e=>{
+    if(e.target === document.getElementById('menu-modal')) closeModal();
+  });
+  document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeModal(); });
+
+  // ── TABS ──
+  function setTab(id){
+    document.querySelectorAll('.mm-panel').forEach(p=>p.classList.remove('active'));
+    document.querySelectorAll('.mm-tab').forEach(t=>t.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+  }
+
+  // ── I18N ──
+  const dict = {
+    en:{
+      nav_menu:"Menu",nav_about:"About",nav_visit:"Visit",
+      hero_eyebrow:"AUTHENTIC · SINCE 2001",
+      hero_desc:"Handcrafted döner, real Turkish recipes, halal-certified. Served hot from the spit every day in the heart of Berlin-Mitte.",
+      btn_order:"ORDER NOW",btn_menu:"SEE MENU",
+      stat_years:"YEARS",stat_daily:"DAILY GUESTS",stat_halal:"HALAL",
+      menu_label:"Our Menu",menu_heading:"What We Serve",
+      btn_full_menu:"VIEW FULL MENU",modal_title:"Full Menu",
+      cat_doner:"Döner & Wraps",cat_plates:"Plates & Specials",cat_sides:"Sides & Drinks",
+      item_classic_doner:"Classic Döner",item_classic_doner_note:"Lamb & veal, house sauce, fresh vegetables, toasted flatbread",
+      item_chicken_doner:"Chicken Döner",item_chicken_doner_note:"Grilled chicken, yogurt sauce, iceberg, tomato",
+      item_falafel:"Falafel Wrap",item_falafel_note:"Crispy chickpea falafel, tahini, pickled red cabbage, harissa",
+      item_lahmacun:"Lahmacun",item_lahmacun_note:"Turkish flatbread pizza, minced meat, parsley, lemon",
+      item_mixed:"Mixed Plate",item_mixed_note:"Döner, rice, grilled vegetables, house salad, bread",
+      item_adana:"Adana Kebab",item_adana_note:"Spiced minced lamb, lavash, sumac onions, grilled peppers",
+      item_iskender:"İskender Kebab",item_iskender_note:"Sliced döner over bread, tomato sauce, yogurt, brown butter",
+      item_fries:"Crispy Fries",item_fries_note:"Sea salt, optional spicy seasoning",
+      item_ayran:"Ayran",item_ayran_note:"Traditional cold yogurt drink, salted",
+      item_baklava:"Baklava",item_baklava_note:"Walnut & pistachio, honey syrup, 2 pcs",
+      about_label:"Our Story",about_title:"Real Döner,\nReal Tradition",
+      about_text1:"Sultan Döner was founded in 2001 by Mehmet Yilmaz, who brought his family's recipe from Gaziantep to the heart of Berlin-Mitte. Every skewer is seasoned overnight, every bread is baked fresh each morning.",
+      about_text2:"We use only halal-certified meat and never freeze our produce. Over 20 years, we've become a fixture of the neighborhood — a place where the line is always worth it.",
+      fact_years:"Years",fact_daily:"Daily Guests",fact_halal:"Halal",
+      visit_label:"Find Us",visit_title:"Come Hungry",
+      vg_address:"Address",vg_hours:"Hours",vg_hours_val:"Mon–Sat 11:00–23:00\nSun 12:00–21:00",
+      vg_phone:"Phone",vg_phone_sub:"Order by phone",
+      footer_copy:"© 2024 Sultan Döner. All rights reserved.",
+      float_order:"ORDER NOW"
+    },
+    de:{
+      nav_menu:"Speisekarte",nav_about:"Über uns",nav_visit:"Besuchen",
+      hero_eyebrow:"AUTHENTISCH · SEIT 2001",
+      hero_desc:"Handgemachter Döner, echte türkische Rezepte, halal-zertifiziert. Täglich frisch vom Spieß im Herzen von Berlin-Mitte.",
+      btn_order:"JETZT BESTELLEN",btn_menu:"ZUR KARTE",
+      stat_years:"JAHRE",stat_daily:"TAGESGÄSTE",stat_halal:"HALAL",
+      menu_label:"Unsere Karte",menu_heading:"Was wir servieren",
+      btn_full_menu:"VOLLSTÄNDIGE KARTE",modal_title:"Vollständige Speisekarte",
+      cat_doner:"Döner & Wraps",cat_plates:"Teller & Specials",cat_sides:"Beilagen & Getränke",
+      item_classic_doner:"Klassischer Döner",item_classic_doner_note:"Lamm & Kalb, Haussoße, frisches Gemüse, geröstetes Fladenbrot",
+      item_chicken_doner:"Hähnchen-Döner",item_chicken_doner_note:"Gegrilltes Hähnchen, Joghurtsoße, Eisbergsalat, Tomate",
+      item_falafel:"Falafel Wrap",item_falafel_note:"Knusprige Falafel, Tahini, eingelegter Rotkohl, Harissa",
+      item_lahmacun:"Lahmacun",item_lahmacun_note:"Türkische Fladenbrotpizza, Hackfleisch, Petersilie, Zitrone",
+      item_mixed:"Gemischter Teller",item_mixed_note:"Döner, Reis, gegrilltes Gemüse, Haussalat, Brot",
+      item_adana:"Adana Kebab",item_adana_note:"Würziges Lammhackfleisch, Lavash, Sumac-Zwiebeln, gegrillte Paprika",
+      item_iskender:"İskender Kebab",item_iskender_note:"Döner auf Brot, Tomatensoße, Joghurt, braune Butter",
+      item_fries:"Knusprige Pommes",item_fries_note:"Meersalz, optional würzige Gewürze",
+      item_ayran:"Ayran",item_ayran_note:"Traditionelles kaltes Joghurtgetränk, gesalzen",
+      item_baklava:"Baklava",item_baklava_note:"Walnuss & Pistazie, Honigsirup, 2 Stück",
+      about_label:"Unsere Geschichte",about_title:"Echter Döner,\nEchte Tradition",
+      about_text1:"Sultan Döner wurde 2001 von Mehmet Yilmaz gegründet, der das Familienrezept aus Gaziantep ins Herz von Berlin-Mitte brachte. Jeder Spieß wird über Nacht gewürzt, jedes Brot jeden Morgen frisch gebacken.",
+      about_text2:"Wir verwenden nur halal-zertifiziertes Fleisch und frieren unsere Produkte nie ein. Seit über 20 Jahren sind wir ein fester Bestandteil des Viertels.",
+      fact_years:"Jahre",fact_daily:"Tagesgäste",fact_halal:"Halal",
+      visit_label:"Besuchen Sie uns",visit_title:"Kommen Sie hungrig",
+      vg_address:"Adresse",vg_hours:"Öffnungszeiten",vg_hours_val:"Mo–Sa 11:00–23:00\nSo 12:00–21:00",
+      vg_phone:"Telefon",vg_phone_sub:"Telefonische Bestellung",
+      footer_copy:"© 2024 Sultan Döner. Alle Rechte vorbehalten.",
+      float_order:"BESTELLEN"
+    },
+    uk:{
+      nav_menu:"Меню",nav_about:"Про нас",nav_visit:"Адреса",
+      hero_eyebrow:"АВТЕНТИЧНО · З 2001 РОКУ",
+      hero_desc:"Ручний донер, справжні турецькі рецепти, сертифікат халяль. Щодня свіже з рожна в серці Берліна-Мітте.",
+      btn_order:"ЗАМОВИТИ",btn_menu:"ПЕРЕГЛЯНУТИ МЕНЮ",
+      stat_years:"РОКІВ",stat_daily:"ГОСТЕЙ НА ДЕНЬ",stat_halal:"ХАЛЯЛЬ",
+      menu_label:"Наше меню",menu_heading:"Що ми готуємо",
+      btn_full_menu:"ПОВНЕ МЕНЮ",modal_title:"Повне меню",
+      cat_doner:"Донер і ролли",cat_plates:"Страви та спеціальне",cat_sides:"Гарніри та напої",
+      item_classic_doner:"Класичний донер",item_classic_doner_note:"Баранина та телятина, фірмовий соус, свіжі овочі, смажений лаваш",
+      item_chicken_doner:"Курячий донер",item_chicken_doner_note:"Смажена курка, йогуртовий соус, айсберг, томат",
+      item_falafel:"Фалафель рол",item_falafel_note:"Хрусткий фалафель, тахіні, маринована червона капуста, хариса",
+      item_lahmacun:"Лахмаджун",item_lahmacun_note:"Турецька тонка піца, фарш, петрушка, лимон",
+      item_mixed:"Мікс-тарілка",item_mixed_note:"Донер, рис, смажені овочі, домашній салат, хліб",
+      item_adana:"Адана кебаб",item_adana_note:"Пряний рубаний ягнятину, лаваш, цибуля з сумахом, смажений перець",
+      item_iskender:"Іскендер кебаб",item_iskender_note:"Донер на хлібі, томатний соус, йогурт, коричневе масло",
+      item_fries:"Хрусткий картопля фрі",item_fries_note:"Морська сіль, за бажанням гостра приправа",
+      item_ayran:"Айран",item_ayran_note:"Традиційний холодний йогуртний напій із сіллю",
+      item_baklava:"Баклава",item_baklava_note:"Волоський горіх та фісташки, медовий сироп, 2 шт.",
+      about_label:"Наша історія",about_title:"Справжній донер,\nСправжня традиція",
+      about_text1:"Sultan Döner засновано у 2001 році Мехметом Йилмазом, який привіз сімейний рецепт із Газіантепа до серця Берліна-Мітте. Кожна шпажка маринується вночі, кожен хліб випікається свіжим щоранку.",
+      about_text2:"Ми використовуємо лише м'ясо з сертифікатом халяль і ніколи не заморожуємо продукти. Понад 20 років ми є частиною цього кварталу.",
+      fact_years:"Років",fact_daily:"Гостей на день",fact_halal:"Халяль",
+      visit_label:"Як нас знайти",visit_title:"Приходьте голодними",
+      vg_address:"Адреса",vg_hours:"Години роботи",vg_hours_val:"Пн–Сб 11:00–23:00\nНд 12:00–21:00",
+      vg_phone:"Телефон",vg_phone_sub:"Замовлення по телефону",
+      footer_copy:"© 2024 Sultan Döner. Всі права захищені.",
+      float_order:"ЗАМОВИТИ"
+    }
+  };
+
+  function setLang(l){
+    document.querySelectorAll('.nl-btn').forEach(b=>b.classList.toggle('active', b.textContent.trim().toLowerCase()===l));
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const k = el.dataset.i18n;
+      if(dict[l][k] !== undefined) el.innerHTML = dict[l][k].replace(/\n/g,'<br>');
+    });
+    document.querySelectorAll('[data-price]').forEach(el=>{
+      if(dict[l][el.dataset.i18n]) el.setAttribute('data-price', el.parentElement.querySelector('.fc-p') ? '€ '+el.parentElement.parentElement.querySelector('.fc-p').textContent : el.getAttribute('data-price'));
+    });
+  }
+
+  // ── REVEAL ──
+  const observer = new IntersectionObserver(entries=>{
+    entries.forEach(e=>{ if(e.isIntersecting) e.target.classList.add('visible'); });
+  },{threshold:0.08});
+  document.querySelectorAll('.rv,.rv2').forEach(el=>observer.observe(el));
+</script>
+</body>
+</html>
